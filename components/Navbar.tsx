@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Menu, X, Phone, Mail, Instagram, Twitter, Facebook } from 'lucide-react';
-import { ViewState } from '../App';
+import { ViewState } from '../App.tsx';
 
 interface NavbarProps {
   isScrolled: boolean;

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ArrowRight, Zap, Target } from 'lucide-react';
-import { ViewState } from '../App';
+import { ViewState } from '../App.tsx';
 
 interface HeroProps {
   setView: (view: ViewState) => void;
@@ -38,7 +38,7 @@ const Hero: React.FC<HeroProps> = ({ setView }) => {
         </h1>
 
         <p className="text-lg md:text-2xl text-white/90 font-medium mb-12 max-w-3xl mx-auto leading-tight px-4">
-          Liderado por <span className="text-orange-400 font-black underline decoration-orange-500/50 underline-offset-8">Berni Rodríguez</span>. Formación técnica de élite y valores en Málaga.
+          Liderado por <span className="text-orange-400 font-black">Berni Rodríguez</span>. Formación técnica de élite y valores en Málaga.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">

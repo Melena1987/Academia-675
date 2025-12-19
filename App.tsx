@@ -1,16 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Philosophy from './components/Philosophy';
-import AcademiaInfo from './components/AcademiaInfo';
-import RegistrationForm from './components/RegistrationForm';
-import IndividualTechnique from './components/IndividualTechnique';
-import Sponsors from './components/Sponsors';
-import JoinUs from './components/JoinUs';
-import Footer from './components/Footer';
-import LegalInfo from './components/LegalInfo';
-import CookieBanner from './components/CookieBanner';
+import Navbar from './components/Navbar.tsx';
+import Hero from './components/Hero.tsx';
+import Philosophy from './components/Philosophy.tsx';
+import AcademiaInfo from './components/AcademiaInfo.tsx';
+import RegistrationForm from './components/RegistrationForm.tsx';
+import IndividualTechnique from './components/IndividualTechnique.tsx';
+import Sponsors from './components/Sponsors.tsx';
+import JoinUs from './components/JoinUs.tsx';
+import Footer from './components/Footer.tsx';
+import LegalInfo from './components/LegalInfo.tsx';
+import CookieBanner from './components/CookieBanner.tsx';
 
 export type ViewState = 'home' | 'legal' | 'registration' | 'technique';
 

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Instagram, Twitter, Facebook, ArrowUpRight, Heart } from 'lucide-react';
-import { ViewState } from '../App';
+import { ViewState } from '../App.tsx';
 
 interface FooterProps {
   setView: (view: ViewState) => void;

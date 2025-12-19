@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ArrowRight, Zap, Target, Users } from 'lucide-react';
-import { ViewState } from '../App';
+import { ViewState } from '../App.tsx';
 
 interface JoinUsProps {
   setView: (view: ViewState) => void;
