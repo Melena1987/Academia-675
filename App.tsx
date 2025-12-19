@@ -7,6 +7,7 @@ import AcademiaInfo from './components/AcademiaInfo';
 import RegistrationForm from './components/RegistrationForm';
 import IndividualTechnique from './components/IndividualTechnique';
 import Sponsors from './components/Sponsors';
+import JoinUs from './components/JoinUs';
 import Footer from './components/Footer';
 import LegalInfo from './components/LegalInfo';
 import CookieBanner from './components/CookieBanner';
@@ -41,9 +42,10 @@ const App: React.FC = () => {
             <section id="academia" className="py-24 bg-white text-black overflow-hidden">
                <Philosophy />
             </section>
-            <section id="programas" className="py-24 bg-[#fcfcfc] text-black">
+            <section id="programas" className="py-24 bg-[#fcfcfc] text-black border-y border-gray-100">
                <AcademiaInfo />
             </section>
+            <JoinUs setView={setView} />
             <Sponsors />
           </>
         )}

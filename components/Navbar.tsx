@@ -28,20 +28,19 @@ const Navbar: React.FC<NavbarProps> = ({ isScrolled, setView, currentView }) => 
     { label: 'LA ACADEMIA', view: 'home' as ViewState, hash: '#academia' },
     { label: 'METODOLOGÍA', view: 'home' as ViewState, hash: '#programas' },
     { label: 'TÉCNICA', view: 'technique' as ViewState },
-    { label: 'INSCRIPCIÓN', view: 'registration' as ViewState }
   ];
 
   return (
     <header className={`fixed w-full z-50 transition-all duration-500 ${isScrolled || currentView !== 'home' ? 'bg-black/95 backdrop-blur-xl py-2 shadow-2xl border-b border-white/5' : 'bg-transparent py-4'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top Info Bar - Hidden on scroll or non-home views */}
+        {/* Top Info Bar */}
         {!isScrolled && currentView === 'home' && (
           <div className="hidden md:flex justify-between items-center mb-3 text-[10px] text-white/50 border-b border-white/5 pb-3">
             <div className="flex gap-6">
-              <a href="tel:+34623047953" className="flex items-center gap-2 hover:text-orange-500 transition-colors uppercase tracking-widest">
+              <a href="tel:+34623047953" className="flex items-center gap-2 hover:text-orange-500 transition-colors uppercase tracking-widest font-bold">
                 <Phone size={12} className="text-orange-500" /> +34 623 047 953
               </a>
-              <a href="mailto:info@academia675.com" className="flex items-center gap-2 hover:text-orange-500 transition-colors uppercase tracking-widest">
+              <a href="mailto:info@academia675.com" className="flex items-center gap-2 hover:text-orange-500 transition-colors uppercase tracking-widest font-bold">
                 <Mail size={12} className="text-orange-500" /> info@academia675.com
               </a>
             </div>
@@ -75,8 +74,11 @@ const Navbar: React.FC<NavbarProps> = ({ isScrolled, setView, currentView }) => 
                 <span className={`absolute bottom-0 left-0 h-0.5 bg-orange-500 transition-all group-hover:w-full ${currentView === item.view ? 'w-full' : 'w-0'}`}></span>
               </button>
             ))}
-            <button onClick={() => handleLinkClick('registration')} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl text-[10px] font-black shadow-xl shadow-orange-500/20 transition-all transform hover:-translate-y-0.5 active:scale-95 tracking-[0.2em]">
-              UNIRSE
+            <button 
+              onClick={() => handleLinkClick('registration')} 
+              className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl text-[10px] font-black shadow-xl shadow-orange-500/20 transition-all transform hover:-translate-y-0.5 active:scale-95 tracking-[0.2em]"
+            >
+              PREINSCRIPCIÓN
             </button>
           </nav>
 
@@ -110,7 +112,7 @@ const Navbar: React.FC<NavbarProps> = ({ isScrolled, setView, currentView }) => 
           onClick={() => handleLinkClick('registration')}
           className="mt-8 bg-orange-500 text-white px-12 py-5 rounded-2xl text-xl font-black shadow-2xl shadow-orange-500/30"
         >
-          INSCRÍBETE YA
+          INSCRÍBETE AHORA
         </button>
       </div>
     </header>
