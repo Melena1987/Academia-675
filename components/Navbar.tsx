@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, Mail, Instagram, Twitter, Facebook } from 'lucide-react';
 import { ViewState } from '../App.tsx';
 
@@ -12,6 +12,18 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ isScrolled, setView, currentView }) => {
   const [isOpen, setIsOpen] = useState(false);
   const logoUrl = "https://firebasestorage.googleapis.com/v0/b/galeriaoficialapp.firebasestorage.app/o/users%2FI5KZz4BuUEfxcoAvSCAWllkQtwt1%2Fphotos%2F1762556860263_academia_675_400x400.png?alt=media&token=7b0e7cfc-f84f-4f75-b031-3d28eb72f220";
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   const handleLinkClick = (view: ViewState, hash?: string) => {
     setView(view);
@@ -30,11 +42,19 @@ const Navbar: React.FC<NavbarProps> = ({ isScrolled, setView, currentView }) => 
     { label: 'TÉCNICA', view: 'technique' as ViewState },
   ];
 
+  // Determine header classes based on scroll and menu state
+  const isSolid = isScrolled || currentView !== 'home' || isOpen;
+  const headerClasses = `fixed w-full z-50 transition-all duration-500 ${
+    isSolid 
+      ? 'bg-black/95 backdrop-blur-xl py-2 shadow-2xl border-b border-white/5' 
+      : 'bg-transparent py-4'
+  }`;
+
   return (
-    <header className={`fixed w-full z-50 transition-all duration-500 ${isScrolled || currentView !== 'home' ? 'bg-black/95 backdrop-blur-xl py-2 shadow-2xl border-b border-white/5' : 'bg-transparent py-4'}`}>
+    <header className={headerClasses}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top Info Bar */}
-        {!isScrolled && currentView === 'home' && (
+        {/* Top Info Bar - Hidden when solid or on mobile */}
+        {!isSolid && currentView === 'home' && (
           <div className="hidden md:flex justify-between items-center mb-3 text-[10px] text-white/50 border-b border-white/5 pb-3">
             <div className="flex gap-6">
               <a href="tel:+34623047953" className="flex items-center gap-2 hover:text-orange-500 transition-colors uppercase tracking-widest font-bold">
@@ -83,37 +103,47 @@ const Navbar: React.FC<NavbarProps> = ({ isScrolled, setView, currentView }) => 
           </nav>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-white p-2">
-              {isOpen ? <X size={32} /> : <Menu size={32} />}
+          <div className="md:hidden flex items-center">
+            <button 
+              onClick={() => setIsOpen(!isOpen)} 
+              className="text-white p-2 relative z-[70] transition-transform active:scale-90"
+              aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+            >
+              {isOpen ? <X size={32} className="text-orange-500" /> : <Menu size={32} />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Nav */}
-      <div className={`fixed inset-0 bg-black z-[60] flex flex-col items-center justify-center space-y-8 transition-all duration-500 md:hidden ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'}`}>
-        <button onClick={() => setIsOpen(false)} className="absolute top-6 right-6 text-white p-2">
-          <X size={40} />
-        </button>
-        <div className="mb-10 p-4 bg-white rounded-3xl w-24 h-24">
+      {/* Mobile Nav Overlay */}
+      <div className={`fixed inset-0 bg-black z-[60] flex flex-col items-center justify-center space-y-8 transition-all duration-500 ease-in-out md:hidden ${isOpen ? 'opacity-100 translate-y-0 visible' : 'opacity-0 -translate-y-full invisible pointer-events-none'}`}>
+        <div className="mb-10 p-4 bg-white rounded-3xl w-24 h-24 shadow-2xl">
            <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
         </div>
-        {navItems.map((item) => (
-          <button
-            key={item.label}
-            onClick={() => handleLinkClick(item.view, item.hash)}
-            className="text-3xl font-[900] text-white hover:text-orange-500 transition-colors tracking-tighter"
-          >
-            {item.label}
-          </button>
-        ))}
+        <div className="flex flex-col items-center space-y-6">
+          {navItems.map((item) => (
+            <button
+              key={item.label}
+              onClick={() => handleLinkClick(item.view, item.hash)}
+              className="text-3xl font-[900] text-white hover:text-orange-500 transition-colors tracking-tighter uppercase"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
         <button 
           onClick={() => handleLinkClick('registration')}
-          className="mt-8 bg-orange-500 text-white px-12 py-5 rounded-2xl text-xl font-black shadow-2xl shadow-orange-500/30"
+          className="mt-8 bg-orange-500 text-white px-12 py-5 rounded-2xl text-xl font-black shadow-2xl shadow-orange-500/30 transform active:scale-95 transition-transform"
         >
           INSCRÍBETE AHORA
         </button>
+        
+        {/* Mobile Social Links */}
+        <div className="flex gap-8 pt-12 text-white/30">
+          <Instagram size={24} className="hover:text-orange-500 transition-colors" />
+          <Twitter size={24} className="hover:text-orange-500 transition-colors" />
+          <Facebook size={24} className="hover:text-orange-500 transition-colors" />
+        </div>
       </div>
     </header>
   );
