@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Instagram, Twitter, Facebook, ArrowUpRight, Heart } from 'lucide-react';
+import { Instagram, Twitter, Facebook, ArrowUpRight, Heart, Lock } from 'lucide-react';
 import { ViewState } from '../App.tsx';
 
 interface FooterProps {
@@ -77,7 +77,12 @@ const Footer: React.FC<FooterProps> = ({ setView }) => {
         {/* Bottom Bar Adjusted for Mobile - Single Legal Button */}
         <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-10 text-white/20 font-black uppercase tracking-[0.2em] md:tracking-[0.3em]">
           <div className="flex flex-col items-center md:items-start gap-3 text-center md:text-left w-full md:w-auto order-2 md:order-1">
-            <p className="text-[9px] md:text-[10px]">© {new Date().getFullYear()} ACADEMIA 675 MALAGA. ALL RIGHTS RESERVED.</p>
+            <div className="flex items-center gap-2">
+              <p className="text-[9px] md:text-[10px]">© {new Date().getFullYear()} ACADEMIA 675 MALAGA. ALL RIGHTS RESERVED.</p>
+              <button onClick={() => setView('admin_login')} className="text-white/5 hover:text-white/20 transition-colors">
+                <Lock size={8} />
+              </button>
+            </div>
             <p className="flex items-center gap-1.5 text-[9px] md:text-[10px] transition-colors">
               Web hecha con <Heart size={10} className="fill-orange-500 text-orange-500 inline" /> por 
               <a href="https://www.melenamarketing.com/" target="_blank" rel="noopener noreferrer" className="hover:text-orange-500 transition-colors text-white/40">

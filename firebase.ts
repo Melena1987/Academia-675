@@ -1,6 +1,7 @@
 
 import { initializeApp, FirebaseOptions } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 /**
  * Configuración de Firebase utilizando variables de entorno de Vite.
@@ -19,5 +20,8 @@ const app = initializeApp(firebaseConfig);
 
 // Inicializar Firestore
 export const db = getFirestore(app);
+
+// Inicializar Auth
+export const auth = getAuth(app);
 
 export default app;

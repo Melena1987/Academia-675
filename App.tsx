@@ -11,12 +11,17 @@ import JoinUs from './components/JoinUs.tsx';
 import Footer from './components/Footer.tsx';
 import LegalInfo from './components/LegalInfo.tsx';
 import CookieBanner from './components/CookieBanner.tsx';
+import AdminLogin from './components/Admin/Login.tsx';
+import AdminDashboard from './components/Admin/Dashboard.tsx';
+import { auth } from './firebase.ts';
+import { onAuthStateChanged, User } from 'firebase/auth';
 
-export type ViewState = 'home' | 'legal' | 'registration' | 'technique';
+export type ViewState = 'home' | 'legal' | 'registration' | 'technique' | 'admin_login' | 'admin_dashboard';
 
 const App: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [view, setView] = useState<ViewState>('home');
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +31,17 @@ const App: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      // Redirigir al dashboard si ya está logueado y entra en login
+      if (currentUser && view === 'admin_login') {
+        setView('admin_dashboard');
+      }
+    });
+    return () => unsubscribe();
+  }, [view]);
+
   // Scroll to top when switching views
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -33,7 +49,10 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar isScrolled={isScrolled} setView={setView} currentView={view} />
+      {/* Ocultar Navbar en el dashboard para mayor limpieza visual */}
+      {view !== 'admin_dashboard' && (
+        <Navbar isScrolled={isScrolled} setView={setView} currentView={view} />
+      )}
       
       <main className="flex-grow">
         {view === 'home' && (
@@ -65,9 +84,23 @@ const App: React.FC = () => {
         {view === 'legal' && (
           <LegalInfo onBack={() => setView('home')} />
         )}
+
+        {view === 'admin_login' && (
+          <AdminLogin onBack={() => setView('home')} />
+        )}
+
+        {view === 'admin_dashboard' && (
+          user ? (
+            <AdminDashboard onLogout={() => setView('home')} />
+          ) : (
+            <AdminLogin onBack={() => setView('home')} />
+          )
+        )}
       </main>
 
-      <Footer setView={setView} />
+      {view !== 'admin_dashboard' && (
+        <Footer setView={setView} />
+      )}
       <CookieBanner />
     </div>
   );
