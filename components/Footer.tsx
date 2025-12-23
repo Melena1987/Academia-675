@@ -1,11 +1,23 @@
 
 import React from 'react';
-import { Instagram, Twitter, Facebook, ArrowUpRight, Heart, Lock } from 'lucide-react';
+import { Instagram, Facebook, ArrowUpRight, Heart, Lock } from 'lucide-react';
 import { ViewState } from '../App.tsx';
 
 interface FooterProps {
   setView: (view: ViewState) => void;
 }
+
+const XIcon = ({ size = 24 }: { size?: number }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="currentColor" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+  </svg>
+);
 
 const Footer: React.FC<FooterProps> = ({ setView }) => {
   const logoUrl = "https://firebasestorage.googleapis.com/v0/b/galeriaoficialapp.firebasestorage.app/o/users%2FI5KZz4BuUEfxcoAvSCAWllkQtwt1%2Fphotos%2F1762556860263_academia_675_400x400.png?alt=media&token=7b0e7cfc-f84f-4f75-b031-3d28eb72f220";
@@ -19,6 +31,12 @@ const Footer: React.FC<FooterProps> = ({ setView }) => {
       }, 100);
     }
   };
+
+  const socialLinks = [
+    { component: <Instagram size={24} />, url: "https://www.instagram.com/academia_675/" },
+    { component: <XIcon size={22} />, url: "https://twitter.com/675Academia" },
+    { component: <Facebook size={24} />, url: "https://www.facebook.com/Academia-675-208985053381060" },
+  ];
 
   return (
     <footer className="bg-black text-white pt-24 pb-12 border-t border-white/5">
@@ -37,9 +55,15 @@ const Footer: React.FC<FooterProps> = ({ setView }) => {
               Un proyecto nacido de la pasión de Berni Rodríguez para situar a Málaga como el epicentro del baloncesto formativo mundial.
             </p>
             <div className="flex gap-5 mt-10">
-              {[Instagram, Twitter, Facebook].map((Icon, idx) => (
-                <a key={idx} href="#" className="w-12 h-12 rounded-2xl border border-white/10 flex items-center justify-center hover:bg-orange-500 hover:border-orange-500 hover:scale-110 transition-all duration-300">
-                  <Icon size={24} />
+              {socialLinks.map((social, idx) => (
+                <a 
+                  key={idx} 
+                  href={social.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-2xl border border-white/10 flex items-center justify-center hover:bg-orange-500 hover:border-orange-500 hover:scale-110 transition-all duration-300"
+                >
+                  {social.component}
                 </a>
               ))}
             </div>

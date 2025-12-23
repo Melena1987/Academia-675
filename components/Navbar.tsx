@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, Mail, Instagram, Twitter, Facebook, Lock } from 'lucide-react';
+import { Menu, X, Phone, Mail, Instagram, Facebook, Lock } from 'lucide-react';
 import { ViewState } from '../App.tsx';
 
 interface NavbarProps {
@@ -8,6 +8,18 @@ interface NavbarProps {
   setView: (view: ViewState) => void;
   currentView: ViewState;
 }
+
+const XIcon = ({ size = 24 }: { size?: number }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="currentColor" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+  </svg>
+);
 
 const Navbar: React.FC<NavbarProps> = ({ isScrolled, setView, currentView }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,20 +77,26 @@ const Navbar: React.FC<NavbarProps> = ({ isScrolled, setView, currentView }) => 
                 <Mail size={12} className="text-orange-500" /> info@academia675.com
               </a>
             </div>
-            <div className="flex gap-4">
-              <Instagram size={14} className="cursor-pointer hover:text-orange-500 transition-all hover:scale-110" />
-              <Twitter size={14} className="cursor-pointer hover:text-orange-500 transition-all hover:scale-110" />
-              <Facebook size={14} className="cursor-pointer hover:text-orange-500 transition-all hover:scale-110" />
+            <div className="flex gap-4 items-center">
+              <a href="https://www.instagram.com/academia_675/" target="_blank" rel="noopener noreferrer" className="hover:text-orange-500 transition-all hover:scale-110">
+                <Instagram size={14} />
+              </a>
+              <a href="https://twitter.com/675Academia" target="_blank" rel="noopener noreferrer" className="hover:text-orange-500 transition-all hover:scale-110">
+                <XIcon size={12} />
+              </a>
+              <a href="https://www.facebook.com/Academia-675-208985053381060" target="_blank" rel="noopener noreferrer" className="hover:text-orange-500 transition-all hover:scale-110">
+                <Facebook size={14} />
+              </a>
             </div>
           </div>
         )}
 
         <div className="flex justify-between items-center">
-          <button onClick={() => handleLinkClick('home')} className="flex items-center gap-3 group">
-             <div className="relative w-10 h-10 md:w-12 md:h-12 bg-white rounded-xl overflow-hidden p-1 shadow-lg group-hover:scale-105 transition-transform text-left">
+          <button onClick={() => handleLinkClick('home')} className="flex items-center gap-3 group text-left">
+             <div className="relative w-10 h-10 md:w-12 md:h-12 bg-white rounded-xl overflow-hidden p-1 shadow-lg group-hover:scale-105 transition-transform">
                <img src={logoUrl} alt="Academia 675 Logo" className="w-full h-full object-contain" />
              </div>
-             <span className="text-xl md:text-2xl font-black text-white tracking-tighter leading-none uppercase text-left">
+             <span className="text-xl md:text-2xl font-black text-white tracking-tighter leading-none uppercase">
                 ACADEMIA <span className="text-orange-500 italic">675</span>
              </span>
           </button>
@@ -142,10 +160,16 @@ const Navbar: React.FC<NavbarProps> = ({ isScrolled, setView, currentView }) => 
         </button>
         
         {/* Mobile Social Links */}
-        <div className="flex gap-8 pt-12 text-white/30">
-          <Instagram size={24} className="hover:text-orange-500 transition-colors" />
-          <Twitter size={24} className="hover:text-orange-500 transition-colors" />
-          <Facebook size={24} className="hover:text-orange-500 transition-colors" />
+        <div className="flex gap-8 pt-12 items-center text-white/30">
+          <a href="https://www.instagram.com/academia_675/" target="_blank" rel="noopener noreferrer" className="hover:text-orange-500 transition-colors">
+            <Instagram size={24} />
+          </a>
+          <a href="https://twitter.com/675Academia" target="_blank" rel="noopener noreferrer" className="hover:text-orange-500 transition-colors">
+            <XIcon size={22} />
+          </a>
+          <a href="https://www.facebook.com/Academia-675-208985053381060" target="_blank" rel="noopener noreferrer" className="hover:text-orange-500 transition-colors">
+            <Facebook size={24} />
+          </a>
         </div>
       </div>
     </header>
