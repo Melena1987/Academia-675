@@ -1,9 +1,9 @@
 
 import { initializeApp, FirebaseOptions } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 
 /**
  * Configuración de Firebase utilizando variables de entorno de Vite.
- * Estas variables deben estar definidas en tu archivo .env como VITE_FIREBASE_...
  */
 const firebaseConfig: FirebaseOptions = {
   apiKey: (import.meta as any).env.VITE_FIREBASE_API_KEY,
@@ -16,5 +16,8 @@ const firebaseConfig: FirebaseOptions = {
 
 // Inicializar la instancia de Firebase
 const app = initializeApp(firebaseConfig);
+
+// Inicializar Firestore
+export const db = getFirestore(app);
 
 export default app;
