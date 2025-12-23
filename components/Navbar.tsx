@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, Mail, Instagram, Twitter, Facebook } from 'lucide-react';
+import { Menu, X, Phone, Mail, Instagram, Twitter, Facebook, Lock } from 'lucide-react';
 import { ViewState } from '../App.tsx';
 
 interface NavbarProps {
@@ -40,6 +40,7 @@ const Navbar: React.FC<NavbarProps> = ({ isScrolled, setView, currentView }) => 
     { label: 'LA ACADEMIA', view: 'home' as ViewState, hash: '#academia' },
     { label: 'METODOLOGÍA', view: 'home' as ViewState, hash: '#programas' },
     { label: 'TÉCNICA', view: 'technique' as ViewState },
+    { label: 'ADMIN', view: 'admin_login' as ViewState, icon: <Lock size={10} className="mb-0.5" /> },
   ];
 
   // Determine header classes based on scroll and menu state
@@ -88,8 +89,9 @@ const Navbar: React.FC<NavbarProps> = ({ isScrolled, setView, currentView }) => 
               <button
                 key={item.label}
                 onClick={() => handleLinkClick(item.view, item.hash)}
-                className={`text-[10px] font-black tracking-[0.2em] relative group py-2 transition-colors ${currentView === item.view && (!item.hash || window.location.hash === item.hash) ? 'text-orange-500' : 'text-white/70 hover:text-orange-500'}`}
+                className={`text-[10px] font-black tracking-[0.2em] relative group py-2 transition-colors flex items-center gap-1.5 ${currentView === item.view && (!item.hash || window.location.hash === item.hash) ? 'text-orange-500' : 'text-white/70 hover:text-white'}`}
               >
+                {item.icon && item.icon}
                 {item.label}
                 <span className={`absolute bottom-0 left-0 h-0.5 bg-orange-500 transition-all group-hover:w-full ${currentView === item.view ? 'w-full' : 'w-0'}`}></span>
               </button>
@@ -125,8 +127,9 @@ const Navbar: React.FC<NavbarProps> = ({ isScrolled, setView, currentView }) => 
             <button
               key={item.label}
               onClick={() => handleLinkClick(item.view, item.hash)}
-              className="text-3xl font-[900] text-white hover:text-orange-500 transition-colors tracking-tighter uppercase"
+              className="text-3xl font-[900] text-white hover:text-orange-500 transition-colors tracking-tighter uppercase flex items-center gap-3"
             >
+              {item.label === 'ADMIN' && <Lock size={20} className="text-orange-500/50" />}
               {item.label}
             </button>
           ))}
