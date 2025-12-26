@@ -109,7 +109,7 @@ const IndividualTechnique: React.FC<IndividualTechniqueProps> = ({ onBack }) => 
 
             <div className="space-y-6 text-white/70 text-lg leading-relaxed">
               <p>
-                Si tienes entre <span className="text-white font-bold">11 y 18 años</span> y quieres dar ese salto de calidad, <span className="text-white font-bold">Berni Rodríguez y Alfonso Sánchez</span> te esperan para mejorar tus fundamentos en la pista.
+                Si tienes entre <span className="text-white font-bold">11 y 18 años</span> y quieres dar ese salto de calidad, <span className="text-white font-bold">Berni Rodríguez, Alfonso Sánchez y Bernardo Rodríguez</span> te esperan para mejorar tus fundamentos en la pista.
               </p>
               
               <div className="grid gap-6 mt-12">
