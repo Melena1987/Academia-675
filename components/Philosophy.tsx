@@ -19,7 +19,7 @@ const Philosophy: React.FC = () => {
           
           <div className="space-y-8 text-gray-700 text-xl leading-relaxed font-medium">
             <p className="text-balance">
-              <span className="font-black text-black">Berni Rodríguez</span>, jugador y capitán de Unicaja durante 13 temporadas y Campeón del Mundo con España, junto con su padre, <span className="font-black text-black">Bernardo Rodríguez García</span>, vinculado a las categorías inferiores de Unicaja Baloncesto Málaga durante décadas, han desarrollado el <span className="text-orange-600 font-bold">Sistema Metodológico 675</span>.
+              <span className="font-black text-black">Berni Rodríguez</span>, jugador y capitán de Unicaja durante 13 temporadas y Campeón del Mundo con España, ha desarrollado el <span className="text-orange-600 font-bold">Sistema Metodológico 675</span>.
             </p>
             
             <p className="text-lg text-gray-600 leading-relaxed border-l-4 border-gray-100 pl-8 py-2">
