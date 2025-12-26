@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Send, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 import { db } from '../firebase.ts';
+import emailjs from '@emailjs/browser';
 // Fix: Import individual functions from firebase/firestore
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -30,11 +31,42 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) => {
 
     setLoading(true);
     try {
+      // 1. Guardar en Firebase
       await addDoc(collection(db, 'registrations'), {
         ...formData,
         createdAt: serverTimestamp(),
         type: 'academia'
       });
+
+      // 2. Enviar email vía EmailJS
+      try {
+        const serviceId = (import.meta as any).env.VITE_EMAILJS_SERVICE_ID;
+        const templateId = (import.meta as any).env.VITE_EMAILJS_TEMPLATE_ID;
+        const publicKey = (import.meta as any).env.VITE_EMAILJS_PUBLIC_KEY;
+
+        if (serviceId && templateId && publicKey) {
+          await emailjs.send(
+            serviceId,
+            templateId,
+            {
+              titulo_formulario: "Preinscripción Academia",
+              nombre: formData.nombre,
+              apellidos: formData.apellidos,
+              email: formData.email,
+              telefono: formData.telefono,
+              fecha_nacimiento: formData.fechaNacimiento,
+              club: formData.club || "-",
+              extra_info: formData.isSuperbasket ? "Sí, Grupo Superbasket" : "No",
+              comentarios: formData.comentarios || "Sin comentarios"
+            },
+            publicKey
+          );
+        }
+      } catch (emailError) {
+        console.error("Error al enviar email via EmailJS:", emailError);
+        // No interrumpimos el éxito visual ya que los datos están en Firebase
+      }
+
       setSuccess(true);
       window.scrollTo(0, 0);
     } catch (error) {

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Send, Target, Zap, Trophy, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 import { db } from '../firebase.ts';
+import emailjs from '@emailjs/browser';
 // Fix: Import individual functions from firebase/firestore
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -28,11 +29,42 @@ const IndividualTechnique: React.FC<IndividualTechniqueProps> = ({ onBack }) => 
 
     setLoading(true);
     try {
+      // 1. Guardar en Firebase
       await addDoc(collection(db, 'technique_requests'), {
         ...formData,
         createdAt: serverTimestamp(),
         type: 'tecnica_individual'
       });
+
+      // 2. Enviar email vía EmailJS
+      try {
+        const serviceId = (import.meta as any).env.VITE_EMAILJS_SERVICE_ID;
+        const templateId = (import.meta as any).env.VITE_EMAILJS_TEMPLATE_ID;
+        const publicKey = (import.meta as any).env.VITE_EMAILJS_PUBLIC_KEY;
+
+        if (serviceId && templateId && publicKey) {
+          await emailjs.send(
+            serviceId,
+            templateId,
+            {
+              titulo_formulario: "Solicitud Técnica Individual",
+              nombre: formData.nombre,
+              apellidos: formData.apellidos,
+              email: formData.email,
+              telefono: formData.telefono,
+              fecha_nacimiento: formData.fechaNacimiento,
+              club: "-",
+              extra_info: "-",
+              comentarios: formData.comentarios || "Sin comentarios"
+            },
+            publicKey
+          );
+        }
+      } catch (emailError) {
+        console.error("Error al enviar email via EmailJS:", emailError);
+        // El usuario verá éxito porque los datos están en Firebase
+      }
+
       setSuccess(true);
       window.scrollTo(0, 0);
     } catch (error) {
