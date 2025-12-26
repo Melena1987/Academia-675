@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../../firebase.ts';
-import { collection, query, orderBy, onSnapshot, DocumentData } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, DocumentData, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { 
   Users, 
@@ -13,9 +13,12 @@ import {
   Mail, 
   MessageSquare,
   Trophy,
-  Filter,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Trash2,
+  Edit2,
+  X,
+  Check
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -28,6 +31,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [techniqueRequests, setTechniqueRequests] = useState<DocumentData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // States for editing
+  const [editingItem, setEditingItem] = useState<DocumentData | null>(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -83,6 +90,39 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       onLogout();
     } catch (err) {
       console.error("Error al cerrar sesión:", err);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.")) return;
+    
+    setActionLoading(true);
+    const collectionName = activeTab === 'academia' ? 'registrations' : 'technique_requests';
+    try {
+      await deleteDoc(doc(db, collectionName, id));
+    } catch (err) {
+      console.error("Error eliminando documento:", err);
+      alert("Error al eliminar el registro.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingItem) return;
+
+    setActionLoading(true);
+    const collectionName = activeTab === 'academia' ? 'registrations' : 'technique_requests';
+    try {
+      const { id, ...data } = editingItem;
+      await updateDoc(doc(db, collectionName, id), data);
+      setEditingItem(null);
+    } catch (err) {
+      console.error("Error actualizando documento:", err);
+      alert("Error al actualizar el registro.");
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -195,7 +235,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                   <th className="px-8 py-6">Jugador/a</th>
                   <th className="px-8 py-6">Contacto</th>
                   <th className="px-8 py-6">Detalles</th>
-                  <th className="px-8 py-6">Comentarios</th>
+                  <th className="px-8 py-6">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -255,15 +295,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                           )}
                         </div>
                       </td>
-                      <td className="px-8 py-6 max-w-xs">
-                        {item.comentarios ? (
-                          <div className="flex gap-2 text-white/40">
-                            <MessageSquare size={14} className="shrink-0 mt-1" />
-                            <p className="text-xs italic line-clamp-2">{item.comentarios}</p>
-                          </div>
-                        ) : (
-                          <span className="text-white/10 text-[10px] font-bold uppercase italic">Sin comentarios</span>
-                        )}
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-2">
+                           <button 
+                             onClick={() => setEditingItem(item)}
+                             className="p-3 bg-white/5 hover:bg-orange-500 hover:text-white rounded-xl border border-white/10 transition-all text-white/40"
+                             title="Editar"
+                           >
+                             <Edit2 size={16} />
+                           </button>
+                           <button 
+                             onClick={() => handleDelete(item.id)}
+                             disabled={actionLoading}
+                             className="p-3 bg-white/5 hover:bg-red-500 hover:text-white rounded-xl border border-white/10 transition-all text-white/40 disabled:opacity-50"
+                             title="Eliminar"
+                           >
+                             <Trash2 size={16} />
+                           </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -273,6 +322,113 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           </div>
         </div>
       </div>
+
+      {/* Edit Modal Overlay */}
+      {editingItem && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-[#111] border border-white/10 w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl">
+             <div className="p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                <h3 className="text-xl font-black uppercase tracking-tighter flex items-center gap-3">
+                  <Edit2 className="text-orange-500" size={20} /> Editar Registro
+                </h3>
+                <button 
+                  onClick={() => setEditingItem(null)}
+                  className="p-2 hover:bg-white/5 rounded-full transition-colors"
+                >
+                  <X size={24} />
+                </button>
+             </div>
+             
+             <form onSubmit={handleUpdate} className="p-8 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-white/30">Nombre</label>
+                      <input 
+                        type="text" 
+                        value={editingItem.nombre}
+                        onChange={(e) => setEditingItem({...editingItem, nombre: e.target.value})}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-orange-500 outline-none text-white font-medium"
+                      />
+                   </div>
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-white/30">Apellidos</label>
+                      <input 
+                        type="text" 
+                        value={editingItem.apellidos}
+                        onChange={(e) => setEditingItem({...editingItem, apellidos: e.target.value})}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-orange-500 outline-none text-white font-medium"
+                      />
+                   </div>
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-white/30">Email</label>
+                      <input 
+                        type="email" 
+                        value={editingItem.email}
+                        onChange={(e) => setEditingItem({...editingItem, email: e.target.value})}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-orange-500 outline-none text-white font-medium"
+                      />
+                   </div>
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-white/30">Teléfono</label>
+                      <input 
+                        type="text" 
+                        value={editingItem.telefono}
+                        onChange={(e) => setEditingItem({...editingItem, telefono: e.target.value})}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-orange-500 outline-none text-white font-medium"
+                      />
+                   </div>
+                   {activeTab === 'academia' && (
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-white/30">Club</label>
+                        <input 
+                          type="text" 
+                          value={editingItem.club || ''}
+                          onChange={(e) => setEditingItem({...editingItem, club: e.target.value})}
+                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-orange-500 outline-none text-white font-medium"
+                        />
+                     </div>
+                   )}
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-white/30">Fecha Nacimiento</label>
+                      <input 
+                        type="date" 
+                        value={editingItem.fechaNacimiento}
+                        onChange={(e) => setEditingItem({...editingItem, fechaNacimiento: e.target.value})}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-orange-500 outline-none text-white font-medium"
+                      />
+                   </div>
+                </div>
+
+                <div className="space-y-2">
+                   <label className="text-[10px] font-black uppercase tracking-widest text-white/30">Comentarios</label>
+                   <textarea 
+                     value={editingItem.comentarios || ''}
+                     onChange={(e) => setEditingItem({...editingItem, comentarios: e.target.value})}
+                     rows={3}
+                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-orange-500 outline-none text-white font-medium resize-none"
+                   ></textarea>
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                   <button 
+                     type="button"
+                     onClick={() => setEditingItem(null)}
+                     className="flex-1 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-white font-black text-xs uppercase tracking-widest transition-all"
+                   >
+                     Cancelar
+                   </button>
+                   <button 
+                     type="submit"
+                     disabled={actionLoading}
+                     className="flex-1 py-4 bg-orange-500 hover:bg-orange-600 rounded-2xl text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-orange-500/20 transition-all flex items-center justify-center gap-2"
+                   >
+                     {actionLoading ? <Loader2 className="animate-spin" size={16} /> : <><Check size={16} /> Guardar Cambios</>}
+                   </button>
+                </div>
+             </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
