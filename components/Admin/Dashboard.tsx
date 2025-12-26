@@ -13,7 +13,9 @@ import {
   Mail, 
   MessageSquare,
   Trophy,
-  Filter
+  Filter,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -25,19 +27,49 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [registrations, setRegistrations] = useState<DocumentData[]>([]);
   const [techniqueRequests, setTechniqueRequests] = useState<DocumentData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setLoading(true);
+    setError(null);
+    
     const qAcademia = query(collection(db, 'registrations'), orderBy('createdAt', 'desc'));
     const qTecnica = query(collection(db, 'technique_requests'), orderBy('createdAt', 'desc'));
 
-    const unsubAcademia = onSnapshot(qAcademia, (snapshot) => {
-      setRegistrations(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setLoading(false);
-    });
+    let academiaLoaded = false;
+    let tecnicaLoaded = false;
 
-    const unsubTecnica = onSnapshot(qTecnica, (snapshot) => {
-      setTechniqueRequests(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    const checkLoaded = () => {
+      if (academiaLoaded && tecnicaLoaded) {
+        setLoading(false);
+      }
+    };
+
+    const unsubAcademia = onSnapshot(qAcademia, 
+      (snapshot) => {
+        setRegistrations(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        academiaLoaded = true;
+        checkLoaded();
+      },
+      (err) => {
+        console.error("Error cargando academia:", err);
+        setError("Error al conectar con la base de datos de inscripciones.");
+        setLoading(false);
+      }
+    );
+
+    const unsubTecnica = onSnapshot(qTecnica, 
+      (snapshot) => {
+        setTechniqueRequests(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        tecnicaLoaded = true;
+        checkLoaded();
+      },
+      (err) => {
+        console.error("Error cargando técnica:", err);
+        setError("Error al conectar con la base de datos de técnica individual.");
+        setLoading(false);
+      }
+    );
 
     return () => {
       unsubAcademia();
@@ -46,14 +78,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   }, []);
 
   const handleSignOut = async () => {
-    await signOut(auth);
-    onLogout();
+    try {
+      await signOut(auth);
+      onLogout();
+    } catch (err) {
+      console.error("Error al cerrar sesión:", err);
+    }
   };
 
   const currentData = activeTab === 'academia' ? registrations : techniqueRequests;
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center gap-4 text-white">
+        <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
+        <p className="text-white/40 font-black uppercase tracking-widest text-xs">Sincronizando base de datos...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[#0a0a0a] text-white animate-in fade-in duration-500">
       {/* Sidebar / Header */}
       <nav className="bg-black border-b border-white/5 px-6 py-4 flex flex-col md:flex-row justify-between items-center sticky top-0 z-50 backdrop-blur-xl">
         <div className="flex items-center gap-4 mb-4 md:mb-0">
@@ -81,6 +126,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       </nav>
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-10">
+        {error && (
+          <div className="mb-8 p-6 bg-red-500/10 border border-red-500/20 rounded-3xl flex items-center gap-4 text-red-500">
+            <AlertCircle className="shrink-0" />
+            <p className="font-bold">{error}</p>
+          </div>
+        )}
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="bg-white/5 border border-white/10 p-8 rounded-[2rem] relative overflow-hidden group">
@@ -129,9 +181,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               {activeTab === 'academia' ? 'Registros Academia' : 'Solicitudes Técnica Individual'}
             </h3>
             <div className="flex gap-4">
-               <button className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/40 hover:text-white transition-all">
-                  <Filter size={18} />
-               </button>
                <button className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white font-black text-xs tracking-widest transition-all">
                   Exportar CSV <Download size={16} />
                </button>
@@ -153,7 +202,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 {currentData.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-8 py-20 text-center text-white/20 font-bold uppercase tracking-widest">
-                      No hay registros todavía
+                      {loading ? 'Cargando datos...' : 'No hay registros todavía'}
                     </td>
                   </tr>
                 ) : (
@@ -163,7 +212,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                         <div className="flex items-center gap-3 text-white/40">
                           <Calendar size={14} />
                           <span className="font-medium">
-                            {item.createdAt?.toDate ? item.createdAt.toDate().toLocaleDateString('es-ES') : 'N/A'}
+                            {item.createdAt?.toDate ? item.createdAt.toDate().toLocaleDateString('es-ES') : 'Pendiente'}
                           </span>
                         </div>
                       </td>

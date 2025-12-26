@@ -15,13 +15,23 @@ import AdminLogin from './components/Admin/Login.tsx';
 import AdminDashboard from './components/Admin/Dashboard.tsx';
 import { auth } from './firebase.ts';
 import { onAuthStateChanged, User } from 'firebase/auth';
+import { Loader2 } from 'lucide-react';
 
 export type ViewState = 'home' | 'legal' | 'registration' | 'technique' | 'admin_login' | 'admin_dashboard';
 
 const App: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [view, setView] = useState<ViewState>('home');
+  // Persist view state in localStorage to survive reloads
+  const [view, setView] = useState<ViewState>(() => {
+    const savedView = localStorage.getItem('app_view');
+    return (savedView as ViewState) || 'home';
+  });
   const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    localStorage.setItem('app_view', view);
+  }, [view]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,9 +44,15 @@ const App: React.FC = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      // Redirigir al dashboard si ya está logueado y entra en login
+      setAuthLoading(false);
+      
+      // Auto-redirect if logged in and on login page
       if (currentUser && view === 'admin_login') {
         setView('admin_dashboard');
+      }
+      // If not logged in and trying to access dashboard, send to login
+      if (!currentUser && view === 'admin_dashboard') {
+        setView('admin_login');
       }
     });
     return () => unsubscribe();
@@ -47,9 +63,16 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   }, [view]);
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="text-orange-500 animate-spin w-12 h-12" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Ocultar Navbar en el dashboard para mayor limpieza visual */}
       {view !== 'admin_dashboard' && (
         <Navbar isScrolled={isScrolled} setView={setView} currentView={view} />
       )}
