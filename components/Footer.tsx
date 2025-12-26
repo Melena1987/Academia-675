@@ -98,18 +98,18 @@ const Footer: React.FC<FooterProps> = ({ setView }) => {
           </div>
         </div>
 
-        {/* Bottom Bar Adjusted for Mobile - Single Legal Button */}
-        <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-10 text-white/20 font-black uppercase tracking-[0.2em] md:tracking-[0.3em]">
+        {/* Bottom Bar - Increased contrast and visibility */}
+        <div className="border-t border-white/10 pt-12 flex flex-col md:flex-row justify-between items-center gap-10 text-white/50 font-black uppercase tracking-[0.2em] md:tracking-[0.3em]">
           <div className="flex flex-col items-center md:items-start gap-3 text-center md:text-left w-full md:w-auto order-2 md:order-1">
             <div className="flex items-center gap-2">
-              <p className="text-[9px] md:text-[10px]">© {new Date().getFullYear()} ACADEMIA 675 MALAGA. ALL RIGHTS RESERVED.</p>
-              <button onClick={() => setView('admin_login')} className="text-white/5 hover:text-white/20 transition-colors">
-                <Lock size={8} />
+              <p className="text-[9px] md:text-[11px] text-white/60">© {new Date().getFullYear()} ACADEMIA 675 MALAGA. ALL RIGHTS RESERVED.</p>
+              <button onClick={() => setView('admin_login')} className="text-white/10 hover:text-white/40 transition-colors">
+                <Lock size={10} />
               </button>
             </div>
-            <p className="flex items-center gap-1.5 text-[9px] md:text-[10px] transition-colors">
-              Web hecha con <Heart size={10} className="fill-orange-500 text-orange-500 inline" /> por 
-              <a href="https://www.melenamarketing.com/" target="_blank" rel="noopener noreferrer" className="hover:text-orange-500 transition-colors text-white/40">
+            <p className="flex items-center gap-2 text-[9px] md:text-[11px] transition-colors text-white/40 font-bold">
+              Web hecha con <Heart size={11} className="fill-orange-500 text-orange-500 inline animate-pulse" /> por 
+              <a href="https://www.melenamarketing.com/" target="_blank" rel="noopener noreferrer" className="hover:text-orange-500 transition-colors text-white/80 underline decoration-orange-500/30 underline-offset-4">
                 Melena Marketing
               </a>
             </p>
@@ -118,10 +118,10 @@ const Footer: React.FC<FooterProps> = ({ setView }) => {
           <div className="flex justify-center md:justify-end w-full md:w-auto order-1 md:order-2">
              <button 
                onClick={() => setView('legal')} 
-               className="group flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 hover:border-white/20 transition-all text-[9px] md:text-[10px] text-white/40 hover:text-white whitespace-nowrap"
+               className="group flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 rounded-full hover:bg-white/10 hover:border-white/40 transition-all text-[9px] md:text-[11px] text-white/70 hover:text-white whitespace-nowrap shadow-lg shadow-black/50"
              >
                AVISO LEGAL, PRIVACIDAD Y COOKIES
-               <ArrowUpRight size={12} className="opacity-30 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+               <ArrowUpRight size={13} className="opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
              </button>
           </div>
         </div>
