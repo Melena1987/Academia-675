@@ -19,7 +19,7 @@ const Sponsors: React.FC = () => {
     },
     {
       img: "https://firebasestorage.googleapis.com/v0/b/galeriaoficialapp.firebasestorage.app/o/users%2FI5KZz4BuUEfxcoAvSCAWllkQtwt1%2Fphotos%2F1766739387262_images-1_400x400.png?alt=media&token=e181dee2-9559-4618-85d1-70549412571c",
-      url: "https://aqualy.es/"
+      url: "https://aqualy.com/"
     },
     {
       img: "https://firebasestorage.googleapis.com/v0/b/galeriaoficialapp.firebasestorage.app/o/users%2FI5KZz4BuUEfxcoAvSCAWllkQtwt1%2Fphotos%2F1766739387262_Eit5fDxHGJzhvbjRPQ0T_400x400.jpg?alt=media&token=f030a1b3-a0ef-49eb-b95f-be653988748a",
@@ -35,7 +35,7 @@ const Sponsors: React.FC = () => {
     },
     {
       img: "https://firebasestorage.googleapis.com/v0/b/galeriaoficialapp.firebasestorage.app/o/users%2FI5KZz4BuUEfxcoAvSCAWllkQtwt1%2Fphotos%2F1766739387262_logo-pen_arroya_400x400.png?alt=media&token=e6f9a214-8893-4185-8e09-d3eaf266421c",
-      url: "https://grupopenerroya.com/"
+      url: "https://penarroya.com/"
     },
     {
       img: "https://firebasestorage.googleapis.com/v0/b/galeriaoficialapp.firebasestorage.app/o/users%2FI5KZz4BuUEfxcoAvSCAWllkQtwt1%2Fphotos%2F1766739387262_logodark-blanco_400x400.png?alt=media&token=2d0f29d8-c8f8-4590-8abc-08e19ccc085a",
