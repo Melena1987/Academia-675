@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar.tsx';
 import Hero from './components/Hero.tsx';
 import Philosophy from './components/Philosophy.tsx';
@@ -14,24 +14,60 @@ import CookieBanner from './components/CookieBanner.tsx';
 import AdminLogin from './components/Admin/Login.tsx';
 import AdminDashboard from './components/Admin/Dashboard.tsx';
 import { auth } from './firebase.ts';
-import { onAuthStateChanged, User } from 'firebase/auth';
+// Fix: Import types separately to avoid resolution issues in some environments
+import { onAuthStateChanged } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 import { Loader2 } from 'lucide-react';
 
 export type ViewState = 'home' | 'legal' | 'registration' | 'technique' | 'admin_login' | 'admin_dashboard';
 
 const App: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  // Persist view state in localStorage to survive reloads
-  const [view, setView] = useState<ViewState>(() => {
-    const savedView = localStorage.getItem('app_view');
-    return (savedView as ViewState) || 'home';
-  });
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
 
+  // Map paths to ViewState
+  const getViewStateFromPath = (path: string): ViewState => {
+    if (path === '/inscripcion') return 'registration';
+    if (path === '/tecnica') return 'technique';
+    if (path === '/legal') return 'legal';
+    if (path === '/admin') return 'admin_login';
+    return 'home';
+  };
+
+  // Map ViewState to paths
+  const getPathFromViewState = (view: ViewState): string => {
+    switch (view) {
+      case 'registration': return '/inscripcion';
+      case 'technique': return '/tecnica';
+      case 'legal': return '/legal';
+      case 'admin_login':
+      case 'admin_dashboard': return '/admin';
+      default: return '/';
+    }
+  };
+
+  const [view, setViewInternal] = useState<ViewState>(() => 
+    getViewStateFromPath(window.location.pathname)
+  );
+
+  const setView = useCallback((newView: ViewState) => {
+    const path = getPathFromViewState(newView);
+    if (window.location.pathname !== path) {
+      window.history.pushState({ view: newView }, '', path);
+    }
+    setViewInternal(newView);
+  }, []);
+
+  // Handle browser back/forward buttons
   useEffect(() => {
-    localStorage.setItem('app_view', view);
-  }, [view]);
+    const handlePopState = (event: PopStateEvent) => {
+      const pathView = getViewStateFromPath(window.location.pathname);
+      setViewInternal(pathView);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,17 +82,17 @@ const App: React.FC = () => {
       setUser(currentUser);
       setAuthLoading(false);
       
-      // Auto-redirect if logged in and on login page
-      if (currentUser && view === 'admin_login') {
-        setView('admin_dashboard');
-      }
-      // If not logged in and trying to access dashboard, send to login
-      if (!currentUser && view === 'admin_dashboard') {
-        setView('admin_login');
+      // Auto-switch between login and dashboard if on /admin path
+      if (window.location.pathname === '/admin') {
+        if (currentUser) {
+          setViewInternal('admin_dashboard');
+        } else {
+          setViewInternal('admin_login');
+        }
       }
     });
     return () => unsubscribe();
-  }, [view]);
+  }, []);
 
   // Scroll to top when switching views
   useEffect(() => {
@@ -71,14 +107,19 @@ const App: React.FC = () => {
     );
   }
 
+  // Final view determination based on auth for admin path
+  const currentView = (view === 'admin_login' || view === 'admin_dashboard') 
+    ? (user ? 'admin_dashboard' : 'admin_login')
+    : view;
+
   return (
     <div className="flex flex-col min-h-screen">
-      {view !== 'admin_dashboard' && (
-        <Navbar isScrolled={isScrolled} setView={setView} currentView={view} />
+      {currentView !== 'admin_dashboard' && (
+        <Navbar isScrolled={isScrolled} setView={setView} currentView={currentView} />
       )}
       
       <main className="flex-grow">
-        {view === 'home' && (
+        {currentView === 'home' && (
           <>
             <Hero setView={setView} />
             <section id="academia" className="py-24 bg-white text-black overflow-hidden">
@@ -92,27 +133,27 @@ const App: React.FC = () => {
           </>
         )}
 
-        {view === 'registration' && (
+        {currentView === 'registration' && (
           <div className="pt-24 bg-[#f8f8f8] min-h-screen pb-24">
             <RegistrationForm onBack={() => setView('home')} />
           </div>
         )}
 
-        {view === 'technique' && (
+        {currentView === 'technique' && (
           <div className="pt-20 bg-black min-h-screen">
             <IndividualTechnique onBack={() => setView('home')} />
           </div>
         )}
 
-        {view === 'legal' && (
+        {currentView === 'legal' && (
           <LegalInfo onBack={() => setView('home')} />
         )}
 
-        {view === 'admin_login' && (
+        {currentView === 'admin_login' && (
           <AdminLogin onBack={() => setView('home')} />
         )}
 
-        {view === 'admin_dashboard' && (
+        {currentView === 'admin_dashboard' && (
           user ? (
             <AdminDashboard onLogout={() => setView('home')} />
           ) : (
@@ -121,7 +162,7 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {view !== 'admin_dashboard' && (
+      {currentView !== 'admin_dashboard' && (
         <Footer setView={setView} />
       )}
       <CookieBanner />

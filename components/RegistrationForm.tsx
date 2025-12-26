@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Send, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 import { db } from '../firebase.ts';
+// Fix: Import individual functions from firebase/firestore
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 interface RegistrationFormProps {

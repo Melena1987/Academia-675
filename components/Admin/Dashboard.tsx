@@ -1,7 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../../firebase.ts';
-import { collection, query, orderBy, onSnapshot, DocumentData, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+// Fix: Import types separately and ensure individual functions are exported from modular paths
+import { 
+  collection, 
+  query, 
+  orderBy, 
+  onSnapshot, 
+  doc, 
+  deleteDoc, 
+  updateDoc 
+} from 'firebase/firestore';
+import type { DocumentData } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { 
   Users, 

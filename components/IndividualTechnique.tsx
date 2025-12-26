@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Send, Target, Zap, Trophy, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 import { db } from '../firebase.ts';
+// Fix: Import individual functions from firebase/firestore
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 interface IndividualTechniqueProps {
@@ -122,7 +123,7 @@ const IndividualTechnique: React.FC<IndividualTechniqueProps> = ({ onBack }) => 
                 </div>
                 <div className="flex gap-4 items-start bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                   <Trophy className="w-8 h-8 text-orange-500 shrink-0" />
-                  <p className="text-sm">Un sistema en el que todos ganan: el jugador evoluciona y el club recibe un talento más pulido.</p>
+                  <p className="text-sm">Un sistema en el que todos ganan: el jugador evolucuna y el club recibe un talento más pulido.</p>
                 </div>
               </div>
             </div>

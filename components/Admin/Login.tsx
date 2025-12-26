@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Lock, Loader2, LogIn } from 'lucide-react';
 import { auth } from '../../firebase.ts';
+// Fix: Import individual function from firebase/auth
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 interface AdminLoginProps {
