@@ -47,15 +47,22 @@ const Sponsors: React.FC = () => {
 
         {/* Other Logos - Responsive Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8 items-center">
-           {partnerLogos.map((url, i) => (
-             <div key={i} className="h-32 md:h-40 flex items-center justify-center bg-white border border-gray-100 rounded-3xl p-6 transition-all shadow-sm hover:shadow-xl hover:border-orange-500/20 group overflow-hidden">
-                <img 
-                  src={url} 
-                  alt={`Patrocinador ${i + 1}`} 
-                  className="max-h-full max-w-full object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
-                />
-             </div>
-           ))}
+           {partnerLogos.map((url, i) => {
+             const isWhiteLogo = url.includes('logodark-blanco');
+             return (
+               <div key={i} className="h-32 md:h-40 flex items-center justify-center bg-white border border-gray-100 rounded-3xl p-6 transition-all shadow-sm hover:shadow-xl hover:border-orange-500/20 group overflow-hidden">
+                  <img 
+                    src={url} 
+                    alt={`Patrocinador ${i + 1}`} 
+                    className={`max-h-full max-w-full object-contain transition-all duration-500 group-hover:scale-110 
+                      ${isWhiteLogo 
+                        ? 'brightness-0 opacity-40 group-hover:opacity-100' 
+                        : 'grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100'
+                      }`}
+                  />
+               </div>
+             );
+           })}
         </div>
 
         <div className="mt-24 max-w-3xl mx-auto px-4">
